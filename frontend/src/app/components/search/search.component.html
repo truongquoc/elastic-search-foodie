@@ -1,0 +1,109 @@
+<div class="search-container">
+  <div class="search-header">
+    <h1>Find Your Perfect Restaurant</h1>
+    <p>Search by name, cuisine, or location</p>
+  </div>
+
+  <div class="search-box">
+    <div class="search-input-wrapper">
+      <input 
+        type="text" 
+        [formControl]="searchControl"
+        placeholder="Search restaurants..."
+        (keyup.enter)="onSearch()"
+        class="search-input"
+      >
+      <button class="search-button" (click)="onSearch()" [disabled]="isLoading">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+
+    <div class="suggestions-container" *ngIf="showSuggestions && suggestions.length > 0">
+      <ul class="suggestions-list">
+        <li *ngFor="let suggestion of suggestions" 
+            (click)="selectSuggestion(suggestion)"
+            class="suggestion-item">
+          <i class="fas fa-utensils"></i>
+          <span>{{ suggestion }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+    <div class="location-inputs">
+      <div class="form-group">
+        <label for="latitude">Latitude</label>
+        <input id="latitude" type="number" formControlName="latitude">
+      </div>
+      <div class="form-group">
+        <label for="longitude">Longitude</label>
+        <input id="longitude" type="number" formControlName="longitude">
+      </div>
+      <button type="button" (click)="getCurrentLocation()" class="location-btn">
+        Get Current Location
+      </button>
+    </div>
+
+    <div class="search-filters">
+      <div class="form-group">
+        <label for="radius">Search Radius</label>
+        <input id="radius" type="text" formControlName="radius" placeholder="e.g. 5km">
+      </div>
+
+      <div class="form-group">
+        <label for="cuisine">Cuisine Type</label>
+        <select id="cuisine" formControlName="cuisine">
+          <option value="">All Cuisines</option>
+          <option *ngFor="let cuisine of cuisineTypes" [value]="cuisine.toLowerCase()">
+            {{cuisine}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="priceRange">Price Range</label>
+        <select id="priceRange" formControlName="priceRange">
+          <option value="">All Prices</option>
+          <option *ngFor="let price of priceRanges" [value]="price">
+            {{price}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="minRating">Minimum Rating</label>
+        <input id="minRating" type="number" min="1" max="5" formControlName="minRating">
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="isLoading" class="search-btn">
+      {{isLoading ? 'Searching...' : 'Search Restaurants'}}
+    </button>
+  </form>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="results-container" *ngIf="restaurants.length > 0">
+    <div class="restaurant-card" *ngFor="let restaurant of restaurants">
+      <div class="restaurant-info">
+        <h3>{{ restaurant.name }}</h3>
+        <div class="restaurant-details">
+          <span class="cuisine">{{ restaurant.cuisine }}</span>
+          <span class="rating">
+            <i class="fas fa-star"></i>
+            {{ restaurant.rating }}
+          </span>
+        </div>
+        <p class="address">{{ restaurant.address }}</p>
+        <div class="price-range">{{ restaurant.priceRange }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-results" *ngIf="!isLoading && restaurants.length === 0 && searchControl.value">
+    <p>No restaurants found. Try adjusting your search.</p>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+flowchart TD
+    A[User] -->|1. Send Location & Preferences| B[Web/Mobile App]
+    B -->|2. Query| C[API Server]
+    C -->|3. Elasticsearch Query| D[Elasticsearch Cluster]
+    D -->|4. Results| C
+    C -->|5. Formatted Results| B
+    B -->|6. Display Results| A
+    
+    E[Admin Dashboard] -->|Manage Restaurant Data| F[Data Management API]
+    F -->|CRUD Operations| D
+    
+    G[Data Ingestion Service] -->|Batch Import| D
+    H[External Data Source] -->|Restaurant Data| G
